@@ -6,8 +6,8 @@ from numpy import cos, sin
 import numpy as np
 from numba import jit, prange
 from scipy import integrate
-from radartools.farField import UniformAperture
-from design_functions import pd_from_nesz_res
+from libs.radartools.farField import UniformAperture
+from libs.design_functions import pd_from_nesz_res
 
 
 ## Geometry Class simplified for spherical geometry ##

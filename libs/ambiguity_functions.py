@@ -1,8 +1,8 @@
 import numpy as np
 from numpy import sin, cos, arccos, arcsin
-from design_functions import *
-from spherical_earth_geometry_radar import *
-from radartools.farField import UniformAperture
+from libs.design_functions import *
+from libs.spherical_earth_geometry_radar import *
+from libs.radartools.farField import UniformAperture
 from tqdm import tqdm
 
 
@@ -125,6 +125,7 @@ def RASR(radGeo: RadarGeometry, uniap: UniformAperture, incidence, PRI, Bd, lamb
     :param v_s: Satellite speed
     :param h: satellite Height
     :param c: optional, default Speed of light
+    :param pbaroff: if true disables progress bar from being displayed
     :return:
     """
     # step 1 find orders

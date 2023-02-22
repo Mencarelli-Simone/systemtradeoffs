@@ -15,7 +15,7 @@ from farField import UniformAperture, Aperture
 from utils import *
 from flat_earth_removal_functions import rgf2rgs_incidence, rgs2rgf_incidence # needed for spherical earth
 
-def core_SNR(radarGeo: RadarGeometry, aperture: UniformAperture, ground_range, wavelength, c_light= ):
+def core_SNR(radarGeo: RadarGeometry, aperture: UniformAperture, ground_range, wavelength, c_light= 299792458):
     """
     computes the following equation:
 
