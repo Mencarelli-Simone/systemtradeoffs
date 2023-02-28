@@ -1,0 +1,9 @@
+Order in which the files where added to the project + description:
+
+- unambiguous-imaging-design-analysis.ipynb
+    for a given ideal antenna size and a point in the range-prf plane plots the RASR and AASR and
+    identifies the swath width and Doppler undersampling ratio which guarantee RASR and AASR levels below a
+    given threshold.
+- unambiguous-imaging-design-analysis.py
+    combines all the steps in the jupyter notebook into a function and provides a main test function to analyze
+    individual design solutions manually.

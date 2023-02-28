@@ -118,13 +118,16 @@ class RadarGeometry():
         r = np.linalg.norm(r, axis=0)
         return r
 
-    def orbital_speed(self):
+    def orbital_speed(self, re=6371e3, mu=3.9860044189e14):
         """
         ideal circular orbit speed approximation
+        LEO circular orbit speed approximation
+        :param re: earth radius, default 6371e3
+        :param mu: Earth gravitational constant, default 3.9860044189e14 [m3 s-2]
         :return: the platform estimated speed
         """
         # the platform speed  # gravitational mu # earth radius
-        radar_speed = np.sqrt(3.9860044189e14 / (6378e3 + self.S_0[2]))  # m/s
+        radar_speed = np.sqrt(mu / (re + self.S_0[2]))  # m/s
         return radar_speed
 
 
@@ -347,7 +350,7 @@ def mesh_incidence_azimuth_to_gcs(incidence_mesh, azimuth_mesh, lambda_c, v_s, h
     # cosine of earth-centric elevation angle of azimuth circle parallel to the orbital plane on the sphere
     cos_theta_e = (re + R0_mesh * cos(incidence_mesh)) / (re + h)
     # elevation coordinate of point
-    theta_e = np.arccos(cos_theta_e) * np.sign(incidence_mesh) # to consider also incidence angles behind nadir
+    theta_e = np.arccos(cos_theta_e) * np.sign(incidence_mesh)  # to consider also incidence angles behind nadir
     # azimuth angle coordinate
     theta_a = azimuth_mesh / (re * cos_theta_e)
     # x coordinate mesh
