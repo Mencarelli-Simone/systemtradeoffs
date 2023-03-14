@@ -7,3 +7,10 @@ Order in which the files where added to the project + description:
 - unambiguous-imaging-design-analysis.py
     combines all the steps in the jupyter notebook into a function and provides a main test function to analyze
     individual design solutions manually.
+- unambiguous-imaging-design-mapping.ipynb
+        the idea is to make some surface plots over the TD space to compare:
+            resolution degradation for a fixed minimum AASR,
+            swath portion over which RASR excedes a certain treshold,
+            peak core snr
+            NEXT what happens morphing the antenna size?
+

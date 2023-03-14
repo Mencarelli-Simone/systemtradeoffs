@@ -208,8 +208,6 @@ def umambiguous_mode_analysys(radar_geo: RadarGeometry,
     }
     return return_dict
 
-    # todo test test test!
-
     # ifmain here
 
     # 1 plot the tddiagram and 2 empty figures for aasr rasr
