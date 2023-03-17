@@ -25,7 +25,51 @@ from matplotlib.widgets import Button
 # screen dpi,
 dpii = 100
 
+
 # %%
+
+def optimal_prf_line(ground_range, Wa, wavelength, h=500e3, c=299792458):
+    """
+    minimum prf condition for ideal aperture of width Wa
+    :param ground_range: ground range axis of timing diagram
+    :param Wa: Antenna width in elevation
+    :param wavelength: radar wavelength
+    :param h: radar altitude
+    :param c: speed of light
+    :return: prf points
+    """
+    # %% (In5)
+    # 1 ground range axis in m
+    # 2 incidence angle
+    slant_range = range_ground_to_slant(ground_range, h)
+    # loopy but functional
+    ground_range, eta = range_slant_to_ground(slant_range, h)  # the incidence angle is the second parameter returned
+    # 3 incidence range
+    eta1 = eta - wavelength / (2 * Wa)
+    eta2 = eta + wavelength / (2 * Wa)
+    slant_range_1, ground_range_1 = range_from_theta(eta1 * 180 / np.pi, h)
+    slant_range_2, ground_range_2 = range_from_theta(eta2 * 180 / np.pi, h)
+    # 4 slant range delta
+    slant_delta_range = slant_range_2 - slant_range_1
+    # 5 prf from slant range
+    pri = 2 * slant_delta_range / c
+    prf_opt = 1 / pri
+    return prf_opt
+
+
+def minimum_prf_line(ground_range, vs, La, h=500e3):
+    """
+    minimum PRF To correctly sample the doppler bandwidth (LFM approx)
+    :param ground_range: ground range axis
+    :param vs: satellite speed
+    :param La: antenna length (ideal aperture)
+    :param h: satellite altitude
+    :return: minimum PRF
+    """
+    prf_min = 2 * ground_speed(ground_range, vs, h) / La
+    return prf_min
+
+
 def closest_valid_timing_selection(h, rg_coordinate,
                                    prf_coordinate, dutycycle,
                                    c=299792458):
@@ -172,7 +216,7 @@ def umambiguous_mode_analysys(radar_geo: RadarGeometry,
     if len(indexes) != 0:
         undersampling = doppler_undersampling_ratio[max(indexes)]
         # print(undersampling)
-        if max(indexes) < len(aasr)-1:
+        if max(indexes) < len(aasr) - 1:
             # linear interpolation
             x = (AASR_max)
             x_1 = 10 * np.log10(aasr[max(indexes)])
