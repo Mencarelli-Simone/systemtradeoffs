@@ -91,8 +91,8 @@ def closest_valid_timing_selection(h, rg_coordinate,
 
     # Find the swath given a point in the time diagram
     # i.e.
-    # find closest end of transmission
-    # fing closest start of transmission
+    # find the closest end of transmission
+    # find the closest start of transmission
 
     # (In 12)
     swath_prf = np.zeros(2)
@@ -120,14 +120,16 @@ def closest_valid_timing_selection(h, rg_coordinate,
     return return_dict
 
 
-def umambiguous_mode_analysys(radar_geo: RadarGeometry,
+def umambiguous_mode_analysis(radar_geo: RadarGeometry,
                               uniap: UniformAperture, rg_coordinate,
                               prf_coordinate, AASR_max, RASR_max,
                               vs, wavelength, dutycycle,
                               aasr_points=5, rasr_points=40,
                               c=299792458):
     """
-
+    optimize the design given an initial prf and ground range point for the desired maximum AASR and RASR.
+    note, both the undersampling ratio and the rasr free swath are approximated using only a few points chosen
+    accordingly to rasr_points and aasr_points. #todo complete this manual
     :param radar_geo:
     :param uniap:
     :param rg_coordinate:
@@ -147,8 +149,8 @@ def umambiguous_mode_analysys(radar_geo: RadarGeometry,
     h = radar_geo.S_0[2]
     # Find the swath given a point in the time diagram
     # i.e.
-    # find closest end of transmission
-    # fing closest start of transmission
+    # find the closest end of transmission
+    # find the closest start of transmission
     td_vals = closest_valid_timing_selection(h, rg_coordinate, prf_coordinate, dutycycle, c)
 
     # extracting the values from the return dictionary
@@ -446,7 +448,7 @@ if __name__ == "__main__":
             update = False
             # %%
         if asrupdate:
-            dictionary = umambiguous_mode_analysys(radar_geo,
+            dictionary = umambiguous_mode_analysis(radar_geo,
                                                    uniap, rg_coordinate * 1000,
                                                    prf_coordinate, AASR_max, RASR_max,
                                                    vs, wavelength, dutycycle,
