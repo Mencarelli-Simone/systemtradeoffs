@@ -233,6 +233,9 @@ def umambiguous_mode_analysis(radar_geo: RadarGeometry,
     else:  # it means that no undersampling ratio was found to stay below  AASR
         undersampling = 0
 
+    # Core SNR with corrected undersampling
+    core_snr_underprocessed, azres_underprocessed = core_snr_spherical(radar_geo, uniap, eta_center, wavelength, vs, h, undersampling)
+
     return_dict = {
         'ground-swath': swath_rg,
         'prf': swath_prf,
@@ -250,7 +253,10 @@ def umambiguous_mode_analysis(radar_geo: RadarGeometry,
         'corrected-azimuth-resolution': azres,
         'minimum-undersampling': undersampling,
         'usable-rasr-swath': swath_rasr,
-        'usable-swath-ranges': ranges
+        'usable-swath-ranges': ranges,
+        'optimized-looking-angle': looking_angle_opt[0],
+        'core-snr-linear-underprocessed': core_snr_underprocessed,
+        'corrected-azimuth-resolution-underprocessed': azres_underprocessed
     }
     return return_dict
 

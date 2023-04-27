@@ -49,7 +49,7 @@ def nadir_return_plotter_rg(ax, h, prf_min, prf_max, c=299792458, prf_resolution
             ax.plot(prff, rg_nad / 1000, 'k')
 
 
-def solid_nadir_return_plotter_rg(ax, h, prf_min, prf_max, return_duration, c=299792458, prf_resolution=1):
+def solid_nadir_return_plotter_rg(ax, h, prf_min, prf_max, return_duration, c=299792458, prf_resolution=1, color='C0'):
     """
     plots the nadir returns for the timing diagram on the passed axis
     :param ax: matplotlib axis object
@@ -95,7 +95,7 @@ def solid_nadir_return_plotter_rg(ax, h, prf_min, prf_max, return_duration, c=29
             rg_nad1, th = range_slant_to_ground(R_nad + (c * return_d / 2), h)
             # step 6: plot the damn thing
             # ax.plot(prff, rg_nad / 1000, 'k')
-            ax.fill_between(prff, rg_nad / 1000, rg_nad1 / 1000, facecolor='C0', alpha=0.5)
+            ax.fill_between(prff, rg_nad / 1000, rg_nad1 / 1000, facecolor=color, alpha=0.5)
 
 
 def range_transmit_event(n, dutycycle, prf, h=500e3, c=299792458):
@@ -122,7 +122,8 @@ def range_transmit_event(n, dutycycle, prf, h=500e3, c=299792458):
 
 
 ## interface
-def time_diagram_plotter(ax, prf, dutycycle, h=500e3, re=6371e3, c=299792458, nadir=True, integrationtime=True):
+def time_diagram_plotter(ax, prf, dutycycle, h=500e3, re=6371e3, c=299792458, nadir=True, integrationtime=True,
+                         color='orange'):
     """
     plots a timing diagram over the given axis
         :param ax: matplotlib axis
@@ -153,7 +154,7 @@ def time_diagram_plotter(ax, prf, dutycycle, h=500e3, re=6371e3, c=299792458, na
 
     transmit_events_rg = np.where(np.isnan(transmit_events_rg), 0, transmit_events_rg)
     for nn in range(len(n)):
-        ax.fill_between(prf, transmit_events_rg[nn][1] / 1000, transmit_events_rg[nn][0] / 1000, color='orange')
+        ax.fill_between(prf, transmit_events_rg[nn][1] / 1000, transmit_events_rg[nn][0] / 1000, color=color)
     ax.set_xlabel('PRF [Hz]')
 
 
@@ -174,7 +175,7 @@ def nadir_position_plotter(ax, prf, dutycycle, h=500e3, re=6371e3, c=299792458):
     ax.set_xlabel('PRF [Hz]')
 
 
-def nadir_return_plotter(ax, prf, dutycycle, duration, h=500e3, re=6371e3, c=299792458):
+def nadir_return_plotter(ax, prf, dutycycle, duration, h=500e3, re=6371e3, c=299792458, color='C0'):
     """
     plots a timing diagram over the given axis
     :param ax: matplotlib axis
@@ -184,9 +185,10 @@ def nadir_return_plotter(ax, prf, dutycycle, duration, h=500e3, re=6371e3, c=299
     :param h: satellite height
     :param re: earth radius
     :param c: optional default speed of light
+    :param color: color in plot, default 'C0'
     :return:
     """
-    solid_nadir_return_plotter_rg(ax, h, prf[0], prf[-1], duration, prf_resolution=1)
+    solid_nadir_return_plotter_rg(ax, h, prf[0], prf[-1], duration, prf_resolution=1, color=color)
     ax.set_xlabel('PRF [Hz]')
 
 
