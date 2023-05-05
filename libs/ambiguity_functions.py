@@ -88,7 +88,7 @@ def AASR(radGeo: RadarGeometry, uniap: UniformAperture, incidence, prf, Bd, lamb
     doppler_max = (B * v * sin(theta_a) / (lambda_c * np.sqrt(A - B * cos(theta_a))))
 
     # this maximum doppler corresponds to a sum order of
-    n = int(np.floor(doppler_max / prf))
+    n = int(np.floor(doppler_max / prf)) # be carefull, the order in the sum doesn't have to be larger than n
 
     # 1 denominator
     D, I = np.meshgrid(dop_ax, incidence_angle * np.pi / 180)
@@ -99,7 +99,7 @@ def AASR(radGeo: RadarGeometry, uniap: UniformAperture, incidence, prf, Bd, lamb
     num = np.zeros_like(den)
     # print(den)
     # 2 numerator sum
-    for nn in tqdm(range(1, int(n + 1)), disable=pbaroff):
+    for nn in tqdm(range(1, int(n)), disable=pbaroff): # after the edge of earth the pattern shoots to 1 (TANGENT function singularity)
         #D, I = np.meshgrid(dop_ax, incidence_angle * np.pi / 180)
         # positive n
         num_g, maxg = gain_from_doppler(D + nn * prf, I, radGeo, uniap, lambda_c, v_s, h, aasr=True)

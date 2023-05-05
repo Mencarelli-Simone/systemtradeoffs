@@ -11,6 +11,14 @@ Order in which the files where added to the project + description:
         the idea is to make some surface plots over the TD space to compare:
             resolution degradation for a fixed minimum AASR,
             swath portion over which RASR excedes a certain treshold,
-            peak core snr
+            peak core snr, maybe also the doppler underprocessed snr over the usable swath (this way is only a few samples)
             NEXT what happens morphing the antenna size?
-
+- aasr-mapping.ipynb
+        map the AASR function to understand what's happening:
+        there was an error in the AASR function causing the last replica gain to shoot to 1.
+        it was fixed by reducing the maximum order to 1 replica before the horizon.
+        # todo  check the aasr is fixed also in the ship detection projects
+- unambiguous-imaging-design-boundaries.ipynb
+        #todo
+        define some methods to nicely plot the design limits e.g. setting a threshold on the minimum swath width and
+        minimum ground resolution.
