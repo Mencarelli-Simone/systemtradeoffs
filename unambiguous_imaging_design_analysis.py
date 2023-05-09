@@ -18,7 +18,6 @@ from libs.spherical_earth_geometry_radar import *
 from libs.radartools.farField import Aperture, UniformAperture
 from libs.ambiguity_functions import *
 import matplotlib
-
 matplotlib.use('qt5Agg')
 from matplotlib.widgets import Button
 
@@ -269,6 +268,83 @@ def umambiguous_mode_analysis(radar_geo: RadarGeometry,
     # 4 add a gui button to initiate rasr and aasr computing and update the plots
 
 
+# visualizer
+def design_point_visualizer(axis, dictionary, scalar_element, colormap, scalar_min, scalar_max,
+                            labeling=True,
+                            cmapaxis=0,
+                            scale=1,
+                            unit=' ',
+                            logscale=False, h=500e3,
+                            re=6371e3):
+    """
+
+    :param axis: matplotlib axis for the plot
+    :param dictionary: dictionary from analysis
+    :param scalar_element: a string containing the dictionary key pointing to a scalar value
+    :param colormap: matplotlib colormap key
+    :param scalar_min: minimum scalar value for the colorbar, linear
+    :param scalar_max: maximum scalar value for the colorbar, linear
+    :param labeling: default True, adds a label to every line in the plot
+    :param cmapaxis: axis for the colormap, if not set, no colormap is produced
+    :param scale: multiplier for the scalar value
+    :param unit: string to display on the label after the number
+    :param logscale: if set to true, the scalar value is converted to decibel
+    :return: stocazzo
+    """
+    #1 find holes in the usable swath ranges, note the swath ranges are linearly spaced over the incidence angle axis
+    ranges = dictionary['usable-swath-ranges']
+    slant_ranges = range_ground_to_slant(ranges, h, re)
+    ranges1, incidences = range_slant_to_ground(slant_ranges, h, re)
+    deltas = incidences[1:-1] - incidences[0:-2]  # so far so good
+    if deltas.size != 0:
+        delta = min(deltas)
+    else:
+        delta = 0
+    #print(delta)
+    holes = np.argwhere(deltas > 1.01 * delta)  #contains the indexes of the ranges element preceding a hole
+    #2 color code for scalar value
+    cmap = matplotlib.colormaps[colormap]  # todo change to colormap
+    scalar = np.average(dictionary[scalar_element]) * scale
+    if logscale:
+        scalar = 10 * np.log10(scalar)
+        scalar_min = 10 * np.log10(scalar_min)
+        scalar_max = 10 * np.log10(scalar_max)
+    mapped_color = cmap((scalar - scalar_min) / (scalar_max - scalar_min))
+    #3 draw a line for every contiguous section of range
+    if holes.size == 0:
+        holes = np.array([-1])
+    else:
+        holes += 1
+        holes = np.append(holes, -1)
+    holes = np.insert(holes, 0, 0)
+    #print(deltas)
+    #print(holes)
+    for ii in range(holes.size - 1):
+        yy = ranges[holes[ii]: holes[ii + 1]]
+        xx = np.ones_like(yy) * np.average(dictionary['prf'])
+        label = str(round(scalar, 2)) + unit
+        axis.plot(xx, yy / 1000, color=mapped_color, label=label, linewidth=2.5)
+        if labeling:
+            axis.annotate(label, (np.average(xx) + 2, np.average(yy) / 1000))
+
+    # plot a colored dot if the range is zero
+    if ranges.size == 0:
+        label = str(round(scalar, 2)) + unit
+        axis.plot(np.average(dictionary['prf']), np.average(dictionary['compressed-ground-swath']) / 1000, '.',
+                  color=mapped_color, label=label, linewidth=2.5)
+        if labeling:
+            axis.annotate(label, (np.average(dictionary['prf']) + 2,
+                                  np.average(dictionary['compressed-ground-swath']) / 1000))
+
+    if cmapaxis != 0:
+        # colormap
+        #cmap = plt.cm.get_cmap(colormap) #deprecated
+        cmap = matplotlib.colormaps[colormap]
+        norm = matplotlib.colors.Normalize(vmin=scalar_min, vmax=scalar_max)
+        cb1 = matplotlib.colorbar.ColorbarBase(cmapaxis, cmap=cmap,
+                                        norm=norm,
+                                        orientation='horizontal')
+        cb1.set_label(unit)
 # %% callbacks
 
 def onclick(event):
