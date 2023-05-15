@@ -345,7 +345,111 @@ def design_point_visualizer(axis, dictionary, scalar_element, colormap, scalar_m
                                         norm=norm,
                                         orientation='horizontal')
         cb1.set_label(unit)
+
+# Design filter
+def designs_filter(min_swath, min_az_resolution, results):
+    """
+
+    :param min_swath: numpy array of minimum swathes to select
+    :param min_az_resolution: numpy array of minimum azimuth resolutions to select
+    :param results:
+    :return:    filtered_designs: list of numpy arrays containing the indexes of the selected designs for a min_swat - min_az_resolution pair
+                boundaries: list of minimum swath and azimuth resolution corresponding to the filtered_designs list elements.
+    """
+    # MESHGRIDS i.e. all combinations
+    GS, AR = np.meshgrid(min_swath, min_az_resolution)
+    # flatten them all
+    GS = GS.flatten()
+    AR = AR.flatten()
+    # unpack the corrected azimuth resolution and swath widths
+    azimuth_resolutions = []
+    swathes = []
+    for dictionary in results:
+        ar = float(dictionary["corrected-azimuth-resolution-underprocessed"])
+        sw = float(dictionary["usable-rasr-swath"])
+        azimuth_resolutions.append(ar)
+        swathes.append(sw)
+    # convert dictionaries to numpy arrays
+    azimuth_resolutions = np.array(azimuth_resolutions)
+    swathes = np.array(swathes)
+    # thresholded lists
+    filtered_designs = []  # list of index vectors
+    # reference parameters
+    boundaries = []
+    for ii in range(len(AR)):
+        indexes1 = np.argwhere(azimuth_resolutions <= AR[ii])
+        indexes2 = np.argwhere(swathes >= GS[ii])
+        intersection_set = np.intersect1d(indexes1, indexes2)
+        filtered_designs.append(intersection_set)
+        boundaries.append({'minmum-azimuth-resolution': AR[ii], 'minimum-ground-swath': GS[ii]})
+
+    return filtered_designs, boundaries
 # %% callbacks
+# Filtered level curve
+def design_set_boundary(axis, results, filtered_indexes, box=30, linestyle='k'):
+    """
+
+    :param axis: axis to plot on
+    :param results: resuts list unfiltered
+    :param filtered_indexes: indexes of the winning set
+    :param box: boxcar filter length in sample default 30
+    :param linestyle: arg variable for plot configuration
+    :return:
+    """
+    # retrieve the coordinates
+    x_coordinate = []
+    y_coordinate = []
+    y_top = []
+    y_bottom = []
+    for ii in range(len(results)):
+        dictionary = results[ii]
+        x_coordinate.append(np.average(dictionary['prf']))
+        y_coordinate.append(
+            np.average(dictionary['compressed-ground-swath']))
+        if len(dictionary['usable-swath-ranges']) > 0:
+            y_top.append(dictionary['usable-swath-ranges'].max())
+            y_bottom.append(dictionary['usable-swath-ranges'].min())
+        else:
+            y_top.append(np.average(dictionary['compressed-ground-swath']))
+            y_bottom.append(np.average(dictionary['compressed-ground-swath']))
+
+    # compute the lines
+    max_indexes = []
+    min_indexes = []
+    for ii in range(len(filtered_indexes) + box):
+        indexes = 0
+        if ii >= len(filtered_indexes):
+            indexes = filtered_indexes[ii - box: len(filtered_indexes)]
+        elif ii - box >= 0:
+            indexes = filtered_indexes[ii - box: ii]
+        else:
+            indexes = filtered_indexes[0: ii]
+        subset_range = np.array([y_coordinate[jj] for jj in indexes])
+        if subset_range.size != 0:
+            maxi = np.argmax(subset_range)
+            mini = np.argmin(subset_range)
+            if indexes[maxi] not in max_indexes:  # if not in list already
+                max_indexes.append(indexes[maxi])
+            if indexes[mini] not in min_indexes:
+                min_indexes.append(indexes[mini])
+
+    # plot the lines
+    x_coordinate = np.array(x_coordinate)
+    y_top = np.array(y_top)
+    y_bottom = np.array(y_bottom)
+    axis.plot(x_coordinate[min_indexes], y_bottom[min_indexes] * 1e-3, linestyle)
+    axis.plot(x_coordinate[max_indexes], y_top[max_indexes] * 1e-3, linestyle)
+    # close the lines
+    axis.plot([x_coordinate[max_indexes[0]], x_coordinate[max_indexes[0]]],
+              [y_top[max_indexes[0]] * 1e-3, y_bottom[min_indexes[0]] * 1e-3], linestyle)
+    axis.plot([x_coordinate[min_indexes[-1]], x_coordinate[min_indexes[-1]]],
+          [y_bottom[min_indexes[-1]] * 1e-3, y_top[max_indexes[-1]] * 1e-3], linestyle)
+
+
+
+
+
+
 
 def onclick(event):
     print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %

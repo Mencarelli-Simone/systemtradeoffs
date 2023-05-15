@@ -1,12 +1,12 @@
 Order in which the files where added to the project + description:
 
 - unambiguous-imaging-design-analysis.ipynb
-    for a given ideal antenna size and a point in the range-prf plane plots the RASR and AASR and
-    identifies the swath width and Doppler undersampling ratio which guarantee RASR and AASR levels below a
-    given threshold.
+        for a given ideal antenna size and a point in the range-prf plane plots the RASR and AASR and
+        identifies the swath width and Doppler undersampling ratio which guarantee RASR and AASR levels below a
+        given threshold.
 - unambiguous_imaging_design_analysis.py
-    combines all the steps in the jupyter notebook into a function and provides a main test function to analyze
-    individual design solutions manually.
+        combines all the steps in the jupyter notebook into a function and provides a main test function to analyze
+        individual design solutions manually.
 - unambiguous-imaging-design-mapping.ipynb
         the idea is to make some surface plots over the TD space to compare:
             resolution degradation for a fixed minimum AASR,
@@ -19,6 +19,10 @@ Order in which the files where added to the project + description:
         it was fixed by reducing the maximum order to 1 replica before the horizon.
         # todo  check the aasr is fixed also in the ship detection projects
 - unambiguous-imaging-design-boundaries.ipynb
-        #todo
         define some methods to nicely plot the design limits e.g. setting a threshold on the minimum swath width and
         minimum ground resolution.
+        The functions defined in this notebook are embedded into unambiguous_imaging_design_analysys.py
+- unambiguous-imaging-design-boundaries.py
+        scripts the above jupyter notebook to produce a contour plot of the design solutions. #todo
+
+
