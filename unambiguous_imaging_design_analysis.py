@@ -386,7 +386,7 @@ def designs_filter(min_swath, min_az_resolution, results):
     return filtered_designs, boundaries
 # %% callbacks
 # Filtered level curve
-def design_set_boundary(axis, results, filtered_indexes, box=30, linestyle='k'):
+def design_set_boundary(axis, results, filtered_indexes, box=30, linestyle='k', labl=''):
     """
 
     :param axis: axis to plot on
@@ -443,7 +443,7 @@ def design_set_boundary(axis, results, filtered_indexes, box=30, linestyle='k'):
     axis.plot([x_coordinate[max_indexes[0]], x_coordinate[max_indexes[0]]],
               [y_top[max_indexes[0]] * 1e-3, y_bottom[min_indexes[0]] * 1e-3], linestyle)
     axis.plot([x_coordinate[min_indexes[-1]], x_coordinate[min_indexes[-1]]],
-          [y_bottom[min_indexes[-1]] * 1e-3, y_top[max_indexes[-1]] * 1e-3], linestyle)
+          [y_bottom[min_indexes[-1]] * 1e-3, y_top[max_indexes[-1]] * 1e-3], linestyle, label=labl)
 
 
 
