@@ -88,3 +88,4 @@ for ii in range(len(bounds)):
     design_set_boundary(ax, results_list, filtered_designs[ii], linestyle = styles[ii], labl=str(bounds[ii]))
 
 ax.legend()
+
